@@ -1,6 +1,6 @@
 # Roupio
 
-Roupio is a open source ASBL oriented ERP. It aims to be easily modifiable by adding multiple modules. It ships his own HTML/CSS framework.
+Roupio is a open source nonprofit organization oriented ERP. It aims to be easily modifiable by adding multiple modules. It ships his own HTML/CSS framework.
 
 ## Installation
 
