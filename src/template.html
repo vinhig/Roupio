@@ -5,12 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="normalize.css" rel="stylesheet">
     <link href="style.css" rel="stylesheet">
-    <title>{{ title }}</title>
+    <title>Roupio - {{ title }}</title>
 </head>
 
 <body>
+    <nav>
+        {{ header }}
+    </nav>
     {{ content }}
+    <footer>
+        Proudly powered by <b>Roupio</b>. Made with <span style="color: red">♥</span> by Sasalami (vinhig)
+    </footer>
 </body>
 
 </html>

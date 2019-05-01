@@ -4,7 +4,10 @@ require "../Page"
 # Cloud page
 class Cloud < Page
   def load
-    @content.add_element(HTML::Paragraph.new("test1", "Nope, you don't"))
-    @content.add_element(HTML::NavLink.new("test1", "member", "Nope, you don't"))
+    scroll = HTML::ScrollBox.new("scroll")
+    card1 = HTML::Card.new("card1")
+    scroll.add_element(card1)
+    card1.add_element(HTML::NavLink.new("test2", "member", "Ceci est un test"))
+    @content.add_element(scroll)
   end
 end

@@ -31,18 +31,33 @@ end
 
 # Define page and their corresponding page
 pages = {
-  "/member" => Member,
-  "/cloud"  => Cloud,
+  ["/member", "Membre"] => Member,
+  ["/cloud", "Cloud"]  => Cloud,
 }
+
+# Precache and precompute 'template.html' to speed up rendering
+template = File.read("src/template.html")
+# Compute header
+header = ""
+
+# A NavLink for each page
+pages.each do |page|
+  header += "<a href='#{page[0][0]}'>#{page[0][1]}</a>"
+end
+
+# Finally fill the header with our computed header
+template = template.sub("{{ header }}", header)
 
 # Bind all route to their corresponding page
 pages.each do |page|
-  get page[0] do |env|
+  get page[0][0] do |env|
     # First check if the user is connected
     if env.session.string?("id") == nil
       env.redirect "/"
     else
-      mod = page[1].new env
+      # Create user indentity
+      user = UserInfo.new(env.session.string("id"), "admin")
+      mod = page[1].new user, template
       mod.render
     end
   end

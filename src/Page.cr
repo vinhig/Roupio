@@ -1,14 +1,15 @@
 require "../src/Content"
+require "../src/UserInfo"
 
 # Site page.
 class Page
-  @user_name : String
+  @user : UserInfo
   @content : HTML::Content
+  @template : String
 
   # Init an empty page.
-  def initialize(env)
-    @content = HTML::Content.new
-    @user_name = env.session.string("id")
+  def initialize(@user, @template)
+    @content = HTML::Content.new(@template)
     load()
   end
 

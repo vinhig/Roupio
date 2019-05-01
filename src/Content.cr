@@ -6,9 +6,8 @@ module HTML
     @text : String
 
     # Init an empty HTML document from the 'template.html' file.
-    def initialize
+    def initialize(@text)
       @elements = Array(HTMLElement).new
-      @text = File.read("src/template.html")
     end
 
     # Return the corresponding element to id.
@@ -102,6 +101,25 @@ module HTML
       super(@id)
       @tag = "p"
       @innerText = text
+    end
+  end
+
+  # Custom HTML element equivalent to a Facebook post
+  class Card < HTMLElement
+    # Init a stylized 'div' from given characteristics
+    def initialize(@id)
+      super(@id)
+      @tag = "div"
+      @attributes["class"] = "card"
+    end
+  end
+
+  # Custom HTML element to scroll through multiple Cards
+  class ScrollBox < HTMLElement
+    # Init a stylized 'div' from given characteristics
+    def initialize(@id)
+      super(@id)
+      @tag = "section"
     end
   end
 end
