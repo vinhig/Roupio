@@ -1,0 +1,21 @@
+name: Roupio
+version: 0.1.0
+
+authors:
+  - vinhig <vincent.higginson@student.unamur.be>
+
+targets:
+  Rupio:
+    main: src/Roupio.cr
+
+dependencies:
+  kemal:
+    github: kemalcr/kemal
+  kemal-session:
+    github: kemalcr/kemal-session
+  sqlite3:
+    github: crystal-lang/crystal-sqlite3
+
+crystal: 0.28.0
+
+license: MIT
