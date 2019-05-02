@@ -104,7 +104,34 @@ module HTML
     end
   end
 
-  # Custom HTML element equivalent to a Facebook post
+  # A 'h2' HTML element.
+  #
+  # ```html
+  # <h2 id='id'></h2>
+  # ```
+  class Header2 < HTMLElement
+    # Init a 'a' element from given characteristics.
+    def initialize(@id, text : String)
+      super(@id)
+      @tag = "h2"
+      @innerText = text
+    end
+  end
+
+  # A 'span' HTML element.
+  #
+  # ```html
+  # <span id='id'></h2>
+  # ```
+  class Span < HTMLElement
+    # Init a 'span'
+    def initialize(@id, @innerText)
+      super(@id)
+      @tag = "span"
+    end
+  end
+
+  # Custom HTML element equivalent to a Facebook post box.
   class Card < HTMLElement
     # Init a stylized 'div' from given characteristics
     def initialize(@id)
@@ -114,12 +141,46 @@ module HTML
     end
   end
 
-  # Custom HTML element to scroll through multiple Cards
+  # Custom HTML element to scroll through multiple Cards.
   class ScrollBox < HTMLElement
     # Init a stylized 'div' from given characteristics
     def initialize(@id)
       super(@id)
       @tag = "section"
+    end
+  end
+
+  # Custom HTML element representing a side panel.
+  class SidePanel < HTMLElement
+    # Init a panel from given links
+    def initialize(@id, label : String, links : Array(Array(String)))
+      super(@id)
+      @tag = "div"
+      @attributes["class"] = "panel"
+      # Add box caption
+      add_element(HTML::Header2.new("#{label}-label-panel", label))
+      # Build links tree
+      links.each do |link|
+        add_element(HTML::NavLink.new("#{link[0]}-link-panel", link[0], link[1]))
+      end
+    end
+  end
+
+  # Custom HTML element representing a file tree.
+  class FileLink < HTMLElement
+    # Init an empty files tree
+    def initialize(@id, is_folder : Bool, link : String, label : String)
+      super(@id)
+      if !is_folder
+        @tag = "li"
+        @attributes["class"] = "file-tree"
+        add_element(HTML::NavLink.new("#{link}-file-tree", link, label))
+      else
+        @tag = "ul"
+        @attributes["class"] = "file-tree"
+        @innerText = "<li class='folder-label'>#{label}/</li>"
+        add_element(HTML::Span.new("label-span", label))
+      end
     end
   end
 end

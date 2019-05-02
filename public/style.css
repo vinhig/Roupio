@@ -46,3 +46,38 @@ section {
     width: 50%;
     border: 1px solid lightgray;
 }
+
+/* Input */
+input {
+    background-color: white;
+    color: black;
+}
+
+/* Side panel */
+.panel {
+    width: 256px;
+    border: 1px solid lightgray;
+    position: absolute;
+    top: 50px;
+    background-color: white;
+    padding: 10px
+}
+
+.panel a {
+    display: block;
+    padding: 5px;
+}
+
+/* File tree */
+.file-tree {
+    list-style: none;
+    margin: 0;
+    padding-left: 15px;
+    margin-left: 5px;
+}
+
+.folder-label {
+    padding: 5px;
+    padding-left: -15px;
+    list-style-image: url(icons/folder.png);
+}

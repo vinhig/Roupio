@@ -8,13 +8,13 @@ class Page
   @template : String
 
   # Init an empty page.
-  def initialize(@user, @template)
+  def initialize(@user, @template, url : String)
     @content = HTML::Content.new(@template)
-    load()
+    load(url)
   end
 
   # Procedurally load the HTML document.
-  def load
+  def load(url : String)
   end
 
   # Ask the corresponding page content to render itself and return its value.

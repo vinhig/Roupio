@@ -23,7 +23,7 @@ post "/connect" do |env|
   can_connect = db.connect?(pseudo, mdp)
   if can_connect != ""
     env.session.string("id", can_connect)
-    env.redirect "/cloud"
+    env.redirect "/cloud/main"
   else
     env.redirect "/"
   end
@@ -32,7 +32,7 @@ end
 # Define page and their corresponding page
 pages = {
   ["/member", "Membre"] => Member,
-  ["/cloud", "Cloud"]  => Cloud,
+  ["/cloud", "Cloud"]   => Cloud,
 }
 
 # Precache and precompute 'template.html' to speed up rendering
@@ -42,7 +42,7 @@ header = ""
 
 # A NavLink for each page
 pages.each do |page|
-  header += "<a href='#{page[0][0]}'>#{page[0][1]}</a>"
+  header += "<a href='#{page[0][0]}/main'>#{page[0][1]}</a>"
 end
 
 # Finally fill the header with our computed header
@@ -50,14 +50,14 @@ template = template.sub("{{ header }}", header)
 
 # Bind all route to their corresponding page
 pages.each do |page|
-  get page[0][0] do |env|
+  get "#{page[0][0]}/:url" do |env|
     # First check if the user is connected
     if env.session.string?("id") == nil
       env.redirect "/"
     else
       # Create user indentity
       user = UserInfo.new(env.session.string("id"), "admin")
-      mod = page[1].new user, template
+      mod = page[1].new user, template, env.params.url["url"]
       mod.render
     end
   end
