@@ -9,9 +9,6 @@ class Data
   # Init, connect and feed the database.
   def initialize
     @db = DB.open("sqlite3://db.db")
-    # @db.exec "create table users (pseudo text not null, mdp text not null, primary key (pseudo))"
-    # @db.exec "insert into users (pseudo, mdp) values ('salut', 'salut')"
-    # @db.exec "insert into users (pseudo, mdp) values ('bjr', 'bjr')"
   end
 
   # Check if the credentials of a user exists.
