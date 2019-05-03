@@ -41,9 +41,9 @@ module HTML
   # Empty HTML element without any characteristics.
   class HTMLElement
     property id : String
+    property attributes : Hash(String, Int32 | String)
     @tag : String
     @innerText : String
-    @attributes : Hash(String, Int32 | String)
     @children : Array(HTMLElement)
 
     # Init an empty HTML element. Be aware, an empty element is renderable but will not work in browser.
@@ -72,6 +72,14 @@ module HTML
     def add_element(element : HTMLElement)
       # Add a new element to the list of children
       @children.push(element)
+    end
+
+    # Add an list of HTML element to the list of children.
+    def add_element(elements : Array(HTMLElement))
+      # Add a new element to the list of children
+      elements.each do |element|
+        add_element(element)
+      end
     end
   end
 
@@ -145,6 +153,7 @@ module HTML
       super(@id)
       @tag = "select"
       @attributes["required"] = ""
+      @attributes["name"] = @id
       @innerText = "<option value=''>Sélectionnez une catégorie</option>"
       options.each do |option|
         @innerText += "<option value='#{option}'>#{option}</option>"
@@ -177,11 +186,13 @@ module HTML
       @tag = "input"
       @attributes["type"] = type
       @attributes["required"] = ""
+      @attributes["name"] = @id
       if type == "text"
         @attributes["placeholder"] = label
       else
         @attributes["text"] = label
       end
+      
     end
   end
 
@@ -197,6 +208,7 @@ module HTML
       @tag = "form"
       @attributes["action"] = action
       @attributes["method"] = method
+      @attributes["enctype"] = "multipart/form-data"
     end
   end
 

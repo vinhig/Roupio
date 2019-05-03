@@ -6,16 +6,24 @@ class Page
   @user : UserInfo
   @content : HTML::Content
   @template : String
+  @url : String
 
   # Init an empty page.
-  def initialize(@user, @template, url : String)
+  def initialize(@user, @template, env)
     @content = HTML::Content.new(@template)
-    load(url)
+    @url = env.params.url["url"]
   end
 
   # Procedurally load the HTML document.
-  def load(url : String)
+  # Accessible via GET routes.
+  def load(db)
   end
+
+  # Before load the HTML document, work on backend.
+  # Accessible via POST routes.
+  def enter(env, db)
+  end
+
 
   # Ask the corresponding page content to render itself and return its value.
   def render

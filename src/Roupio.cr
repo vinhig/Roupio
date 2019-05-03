@@ -48,18 +48,30 @@ end
 # Finally fill the header with our computed header
 template = template.sub("{{ header }}", header)
 
+# Just check if the user is connected
+
 # Bind all route to their corresponding page
 pages.each do |page|
   get "#{page[0][0]}/:url" do |env|
-    # First check if the user is connected
     if env.session.string?("id") == nil
       env.redirect "/"
     else
-      # Create user indentity
       user = UserInfo.new(env.session.string("id"), "admin")
-      mod = page[1].new user, template, env.params.url["url"]
+      mod = page[1].new user, template, env
+      # A get route means load and render the DOM
+      mod.load(db)
       mod.render
     end
+  end
+
+  post "#{page[0][0]}/:url" do |env|
+    if env.session.string?("id") == nil
+      env.redirect "/"
+    end
+    user = UserInfo.new(env.session.string("id"), "admin")
+    mod = page[1].new user, template, env
+    # A post route means just enter the page
+    mod.enter env, db
   end
 end
 

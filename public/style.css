@@ -49,8 +49,16 @@ section {
 
 /* Input */
 input {
-    background-color: white;
-    color: black;
+    width: 256px;
+    padding: 5px;
+    margin: 0px;
+    margin-top: 10px;
+    border-radius: 5px 5px;
+    border: solid gray 1px
+}
+
+input[type="submit"] {
+    cursor: pointer;
 }
 
 /* Side panel */
