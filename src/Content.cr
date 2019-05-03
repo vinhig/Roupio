@@ -110,7 +110,7 @@ module HTML
   # <h2 id='id'></h2>
   # ```
   class Header2 < HTMLElement
-    # Init a 'a' element from given characteristics.
+    # Init a 'h2' element from given characteristics.
     def initialize(@id, text : String)
       super(@id)
       @tag = "h2"
@@ -118,16 +118,85 @@ module HTML
     end
   end
 
+  # A 'h3' HTML element.
+  #
+  # ```html
+  # <h3 id='id'></h3>
+  # ```
+  class Header4 < HTMLElement
+    # Init a 'h4' element from given characteristics.
+    def initialize(@id, text : String)
+      super(@id)
+      @tag = "h4"
+      @innerText = text
+    end
+  end
+
+  # A 'select' HTML element.
+  #
+  # ```html
+  # <select name="multiple-option">
+  #   <option>Option1</option>
+  # </select>
+  # ```
+  class Select < HTMLElement
+    # Init a 'h4' element from given characteristics.
+    def initialize(@id, options : Array(String))
+      super(@id)
+      @tag = "select"
+      @attributes["required"] = ""
+      @innerText = "<option value=''>Sélectionnez une catégorie</option>"
+      options.each do |option|
+        @innerText += "<option value='#{option}'>#{option}</option>"
+      end
+    end
+  end
+
   # A 'span' HTML element.
   #
   # ```html
-  # <span id='id'></h2>
+  # <span id='id'></span>
   # ```
   class Span < HTMLElement
     # Init a 'span'
     def initialize(@id, @innerText)
       super(@id)
       @tag = "span"
+    end
+  end
+
+  # A 'input' HTML element.
+  #
+  # ```html
+  # <input type="type">
+  # ```
+  class Input < HTMLElement
+    # Init a 'span'
+    def initialize(@id, type, label)
+      super(@id)
+      @tag = "input"
+      @attributes["type"] = type
+      @attributes["required"] = ""
+      if type == "text"
+        @attributes["placeholder"] = label
+      else
+        @attributes["text"] = label
+      end
+    end
+  end
+
+  # A 'form' HTML element.
+  #
+  # ```html
+  # <form id='id'></form>
+  # ```
+  class Form < HTMLElement
+    # Init a 'span'
+    def initialize(@id, method : String, action : String)
+      super(@id)
+      @tag = "form"
+      @attributes["action"] = action
+      @attributes["method"] = method
     end
   end
 

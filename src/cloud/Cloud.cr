@@ -12,9 +12,11 @@ class Cloud < Page
     side = HTML::SidePanel.new("cloud-id", "Cloud", links)
     @content.add_element(side)
     box = HTML::ScrollBox.new("ScrollBox")
-    card = HTML::Card.new("Card")
+
     case url
     when "my"
+      # List of files card
+      card = HTML::Card.new("Card")
       # Adding little caption to explain the page
       caption = HTML::Paragraph.new("caption-help", "Liste des fichiers dont vous êtes l'auteur.")
       # Adding the Box and the Card
@@ -29,14 +31,34 @@ class Cloud < Page
       root.add_element(projet)
       card.add_element(caption)
       card.add_element(root)
+      box.add_element(card)
+      # Upload a file card
+      upload = HTML::Card.new("card-upload")
+      form = HTML::Form.new("form-new-file", "post", "cloud/upload")
+      form.add_element(HTML::Header2.new("Header2-upload-file", "Ajouter un fichier"))
+      form.add_element(HTML::Header4.new("Header4-upload-file", "Catégorie :"))
+      form.add_element(HTML::Select.new("category", ["Projets", "Events", "Formations", "Administration", "Autres"]))
+      form.add_element(HTML::Header4.new("Header4-upload-file", "Fichier :"))
+      form.add_element(HTML::Input.new("file", "file", "Fichier"))
+      form.add_element(HTML::Input.new("submit", "submit", "Envoyer"))
+      upload.add_element(form)
+      box.add_element(upload)
     when "shared"
+      card = HTML::Card.new("Card")
       card.add_element(HTML::Header2.new("test", "Fichiers partagées"))
+      box.add_element(card)
     when "res"
+      card = HTML::Card.new("Card")
       card.add_element(HTML::Header2.new("test", "Ressources partagées"))
+      box.add_element(card)
     when "main"
-      card.add_element(HTML::Header2.new("test", "Page d'accueil du Cloud"))
+      card = HTML::Card.new("Card")
+      card.add_element(HTML::Header2.new("test", "Le cloud!"))
+      caption = HTML::Paragraph.new("caption-explain", "Le cloud vous permet de partager des fichiers avec les différents membres de l'association, pour archiver des documents importants ainsi que partager des ressources et des liens que vous jugez utiles.")
+      card.add_element(caption)
+      box.add_element(card)
     end
-    box.add_element(card)
+
     @content.add_element(box)
   end
 end

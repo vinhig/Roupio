@@ -36,7 +36,7 @@ footer {
 /* Content of a page */
 section {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 }
 
 .card {
