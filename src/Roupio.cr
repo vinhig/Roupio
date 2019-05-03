@@ -22,7 +22,8 @@ post "/connect" do |env|
   mdp = env.params.body["mdp"].as(String)
   can_connect = db.connect?(pseudo, mdp)
   if can_connect != ""
-    env.session.string("id", can_connect)
+    env.session.string("id", can_connect[0])
+    env.session.string("level", can_connect[1])
     env.redirect "/cloud/main"
   else
     env.redirect "/"
@@ -56,7 +57,7 @@ pages.each do |page|
     if env.session.string?("id") == nil
       env.redirect "/"
     else
-      user = UserInfo.new(env.session.string("id"), "admin")
+      user = UserInfo.new(env.session.string("id"), env.session.string("level"))
       mod = page[1].new user, template, env
       # A get route means load and render the DOM
       mod.get env, db

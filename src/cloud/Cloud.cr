@@ -62,6 +62,8 @@ class Cloud < Page
       file_upload.attributes["onchange"] = "bindFileName(event, \"file_name\");"
       form.add_element(file_upload)
       form.add_element(HTML::Input.new("file_name", "hidden", ""))
+      form.add_element(HTML::Header4.new("Header4-upload-file", "Visibilité :"))
+      form.add_element(HTML::Select.new("visibility", ["Rien que moi", "Membres adhérants", "Membres effectifs", "Administrateurs", "Secrétaire, trésorier et président"]))
       pa = HTML::Paragraph.new("submit-p", "")
       pa.add_element(HTML::Input.new("submit", "submit", "Envoyer"))
       pa.attributes["style"] = "text-align: center"
@@ -70,7 +72,37 @@ class Cloud < Page
       box.add_element(upload)
     when "shared"
       card = HTML::Card.new("Card")
-      card.add_element(HTML::Header2.new("test", "Fichiers partagées"))
+      card.add_element(HTML::Header2.new("test", "Fichiers partagés"))
+      caption = HTML::Paragraph.new("caption-help", "Liste des fichiers auquels vous avez accès en étant #{@user.level}")
+      # Build the file tree
+      root = HTML::FileLink.new("root", true, "", "")
+      projet = HTML::FileLink.new("projet", true, "", "Projets")
+      administration = HTML::FileLink.new("administration", true, "", "Administration")
+      formations = HTML::FileLink.new("formations", true, "", "Formations")
+      events = HTML::FileLink.new("events", true, "", "Events")
+      communication = HTML::FileLink.new("communication", true, "", "Communication")
+      autres = HTML::FileLink.new("autres", true, "", "Autres")
+      db.get_shared_file(@user.pseudo, @user.level).each do |file|
+        file_to_add = HTML::FileLink.new(file["name"], false, "cloud/get_file?id=#{file["hash"]}", file["name"])
+        case file["category"]
+        when "Projets"
+          projet.add_element(file_to_add)
+        when "Formations"
+          formations.add_element(file_to_add)
+        when "Events"
+          events.add_element(file_to_add)
+        when "Administration"
+          administration.add_element(file_to_add)
+        when "Communication"
+          communication.add_element(file_to_add)
+        when "Autres"
+          autres.add_element(file_to_add)
+        end
+      end
+      # Add elements to document
+      root.add_element([projet, administration, communication, formations, events, autres])
+      card.add_element(caption)
+      card.add_element(root)
       box.add_element(card)
     when "res"
       card = HTML::Card.new("Card")
@@ -85,7 +117,7 @@ class Cloud < Page
     when "get_file"
       if env.params.query.has_key?("id") || File.exists?("public/uploads/#{env.params.query["id"]}")
         # Get and check the file
-        file = db.get_and_chek(@user.pseudo, env.params.query["id"])
+        file = db.get_and_check(@user.pseudo, env.params.query["id"], @user.level)
         if file != ""
           send_file env, "public/uploads/#{env.params.query["id"]}", filename: file, disposition: "attachment"
         else
@@ -95,7 +127,6 @@ class Cloud < Page
         
       end
     end
-
     @content.add_element(box)
   end
 
@@ -104,6 +135,19 @@ class Cloud < Page
     when "upload"
       # We must store a file
       category = env.params.body["category"]
+      visibility = env.params.body["visibility"]
+      case visibility
+      when "Rien que moi"
+        visibility = "private"
+      when "Membres adhérants"
+        visibility = "adherant;effectif;admin;sky"
+      when "Membres effectifs"
+        visibility = "effectif;admin;sky"
+      when "Administrateurs"
+        visibility = "admin;sky"
+      when "Secrétaire, trésorier et président"
+        visibility = "sky"
+      end
       file = env.params.files["file_to_upload"].tempfile
       content = file.gets_to_end
       file_name = env.params.body["file_name"]
@@ -114,7 +158,7 @@ class Cloud < Page
         env.redirect("my?msg=0")
       else
         File.write(path, content)
-        db.store_new_file(file_name, @user.pseudo, md5.to_s, category)
+        db.store_new_file(file_name, @user.pseudo, md5.to_s, category, visibility)
         env.redirect("my")
       end
     end

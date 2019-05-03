@@ -17,6 +17,7 @@ create table files (
     author text not null,
     name text not null,
     category text not null,
+    visibility text not null,
     primary key (hash),
     foreign key (author) references users(pseudo)
 );
