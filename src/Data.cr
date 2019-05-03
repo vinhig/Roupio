@@ -6,7 +6,9 @@ require "crypto/bcrypt/password"
 class Data
   @db : DB::Database
 
-  # Init, connect and feed the database.
+  # Init, connect the database.
+  #
+  # Check `init.sql` for database structuration.
   def initialize
     @db = DB.open("sqlite3://db.db")
   end
@@ -24,7 +26,7 @@ class Data
     id
   end
 
-  # Store the path, the author and the id of a new file.
+  # Store the path, the author and the id of a new file. The user must be the owner of the file.
   def store_new_file(original_name : String, author : String, hash : String, category : String, visibility : String)
     @db.exec "insert into files (hash, author, name, category, visibility) values (?, ?, ?, ?, ?)", hash, author, original_name, category, visibility
   end
@@ -62,6 +64,8 @@ class Data
   end
 
   # Get and check the file asked by the user.
+  #
+  # Get because we want the original name of the file. Check because we want to verify if the user has access to the file (shared or owned).
   def get_and_check(author : String, id : String, visibility : String) : String
     name_file = ""
     @db.query "select name from files where (author = ? or visibility like '%#{visibility}%' ) and hash = ?", author, id do |rs|

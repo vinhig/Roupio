@@ -2,9 +2,10 @@ require "../Content"
 require "../Page"
 require "kemal"
 
-# Cloud page
+# Cloud page. Easily shared and stored important document through the association.
 class Cloud < Page
   def get(env, db)
+    # Left navbar different possible links.
     links = [
       ["cloud/my", "Mes fichiers"],
       ["cloud/shared", "Fichiers partagés"],
@@ -29,6 +30,7 @@ class Cloud < Page
       events = HTML::FileLink.new("events", true, "", "Events")
       communication = HTML::FileLink.new("communication", true, "", "Communication")
       autres = HTML::FileLink.new("autres", true, "", "Autres")
+      # Ask the database for owned files
       db.get_all_file(@user.pseudo).each do |file|
         file_to_add = HTML::FileLink.new(file["name"], false, "cloud/get_file?id=#{file["hash"]}", file["name"])
         case file["category"]
@@ -46,7 +48,7 @@ class Cloud < Page
           autres.add_element(file_to_add)
         end
       end
-      # Append all object to content
+      # Append all objects to @content
       root.add_element([projet, administration, communication, formations, events, autres])
       card.add_element(caption)
       card.add_element(root)
@@ -99,7 +101,7 @@ class Cloud < Page
           autres.add_element(file_to_add)
         end
       end
-      # Add elements to document
+      # Append all objects to @content
       root.add_element([projet, administration, communication, formations, events, autres])
       card.add_element(caption)
       card.add_element(root)
@@ -111,10 +113,12 @@ class Cloud < Page
     when "main"
       card = HTML::Card.new("Card")
       card.add_element(HTML::Header2.new("test", "Le cloud!"))
-      caption = HTML::Paragraph.new("caption-explain", "Le cloud vous permet de partager des fichiers avec les différents membres de l'association, pour archiver des documents importants ainsi que partager des ressources et des liens que vous jugez utiles.")
+      caption = HTML::Paragraph.new("caption-explain", "Le cloud vous permet de partager des fichiers avec les différents membres de l'association, d'archiver des documents importants ainsi que de partager des ressources et des liens que vous jugez utiles.")
       card.add_element(caption)
       box.add_element(card)
     when "get_file"
+      # An user asks to access a certain file.
+      # Check if the file exists and if the user can take it.
       if env.params.query.has_key?("id") || File.exists?("public/uploads/#{env.params.query["id"]}")
         # Get and check the file
         file = db.get_and_check(@user.pseudo, env.params.query["id"], @user.level)
@@ -124,7 +128,6 @@ class Cloud < Page
           env.redirect "/cloud/my?msg=1"
         end
       else
-        
       end
     end
     @content.add_element(box)
@@ -151,9 +154,12 @@ class Cloud < Page
       file = env.params.files["file_to_upload"].tempfile
       content = file.gets_to_end
       file_name = env.params.body["file_name"]
+      # Digest the content and the pseudo of the user to avoid
+      # storing multiple file with same content
       md5 = OpenSSL::Digest.new("md5")
       md5.update(@user.pseudo + content)
       path = Kemal.config.public_folder + "/uploads/" + md5.to_s
+      # File already exists
       if File.exists?(path)
         env.redirect("my?msg=0")
       else

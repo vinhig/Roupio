@@ -1,6 +1,6 @@
 require "../Page"
 
-# Member page
+# :nodoc:
 class Member < Page
   def get
     p2 = HTML::Paragraph.new("p1", "")

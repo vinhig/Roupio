@@ -19,9 +19,10 @@ class Page
   end
 
   # Load page accessible via POST routes.
+  #
+  # **Warning** : a redirect must be operated.
   def post(env, db)
   end
-
 
   # Ask the corresponding page content to render itself and return its value.
   def render

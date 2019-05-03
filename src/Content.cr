@@ -192,7 +192,6 @@ module HTML
       else
         @attributes["text"] = label
       end
-      
     end
   end
 

@@ -13,7 +13,7 @@ end
 db = Data.new
 
 # Basic authentification system
-# Not using framework tools
+# Not using kemal framework tools
 get "/" do |env|
   send_file env, "src/index.html"
 end
@@ -30,13 +30,13 @@ post "/connect" do |env|
   end
 end
 
-# Define page and their corresponding page
+# Define pages and their corresponding Page classes
 pages = {
   ["/member", "Membre"] => Member,
   ["/cloud", "Cloud"]   => Cloud,
 }
 
-# Precache and precompute 'template.html' to speed up rendering
+# Precache and precompute 'template.html' to speed up rendering by avoiding reading on the disk multiple time
 template = File.read("src/template.html")
 # Compute header
 header = ""
@@ -51,12 +51,13 @@ template = template.sub("{{ header }}", header)
 
 # Just check if the user is connected
 
-# Bind all route to their corresponding page
+# Bind all routes to their corresponding pages
 pages.each do |page|
   get "#{page[0][0]}/:url" do |env|
     if env.session.string?("id") == nil
       env.redirect "/"
     else
+      # Build the user identity
       user = UserInfo.new(env.session.string("id"), env.session.string("level"))
       mod = page[1].new user, template, env
       # A get route means load and render the DOM
@@ -69,6 +70,7 @@ pages.each do |page|
     if env.session.string?("id") == nil
       env.redirect "/"
     end
+    # Build the user identity
     user = UserInfo.new(env.session.string("id"), "admin")
     mod = page[1].new user, template, env
     # A post route means just enter the page
