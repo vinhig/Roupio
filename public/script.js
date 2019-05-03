@@ -2,7 +2,8 @@ window.onload = function () {
     // Check query parameters
     // If there is a msg parameter, show it
     msgs = [
-        "Un fichier identique dont vous êtes l'auteur existe déjà."
+        "Un fichier identique dont vous êtes l'auteur existe déjà.",
+        "Ce fichier est inaccessible."
     ]
     var urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('msg')) {

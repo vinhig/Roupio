@@ -1,9 +1,10 @@
 require "../Content"
 require "../Page"
+require "kemal"
 
 # Cloud page
 class Cloud < Page
-  def load(db)
+  def get(env, db)
     links = [
       ["cloud/my", "Mes fichiers"],
       ["cloud/shared", "Fichiers partagés"],
@@ -12,7 +13,6 @@ class Cloud < Page
     side = HTML::SidePanel.new("cloud-id", "Cloud", links)
     @content.add_element(side)
     box = HTML::ScrollBox.new("ScrollBox")
-
     case @url
     when "my"
       # List of files card
@@ -30,19 +30,20 @@ class Cloud < Page
       communication = HTML::FileLink.new("communication", true, "", "Communication")
       autres = HTML::FileLink.new("autres", true, "", "Autres")
       db.get_all_file(@user.pseudo).each do |file|
+        file_to_add = HTML::FileLink.new(file["name"], false, "cloud/get_file?id=#{file["hash"]}", file["name"])
         case file["category"]
         when "Projets"
-          projet.add_element(HTML::FileLink.new(file["name"], false, file["hash"], file["name"]))
+          projet.add_element(file_to_add)
         when "Formations"
-          formations.add_element(HTML::FileLink.new(file["name"], false, file["hash"], file["name"]))
+          formations.add_element(file_to_add)
         when "Events"
-          events.add_element(HTML::FileLink.new(file["name"], false, file["hash"], file["name"]))
+          events.add_element(file_to_add)
         when "Administration"
-          administration.add_element(HTML::FileLink.new(file["name"], false, file["hash"], file["name"]))
+          administration.add_element(file_to_add)
         when "Communication"
-          communication.add_element(HTML::FileLink.new(file["name"], false, file["hash"], file["name"]))
+          communication.add_element(file_to_add)
         when "Autres"
-          autres.add_element(HTML::FileLink.new(file["name"], false, file["hash"], file["name"]))
+          autres.add_element(file_to_add)
         end
       end
       # Append all object to content
@@ -81,12 +82,24 @@ class Cloud < Page
       caption = HTML::Paragraph.new("caption-explain", "Le cloud vous permet de partager des fichiers avec les différents membres de l'association, pour archiver des documents importants ainsi que partager des ressources et des liens que vous jugez utiles.")
       card.add_element(caption)
       box.add_element(card)
+    when "get_file"
+      if env.params.query.has_key?("id") || File.exists?("public/uploads/#{env.params.query["id"]}")
+        # Get and check the file
+        file = db.get_and_chek(@user.pseudo, env.params.query["id"])
+        if file != ""
+          send_file env, "public/uploads/#{env.params.query["id"]}", filename: file, disposition: "attachment"
+        else
+          env.redirect "/cloud/my?msg=1"
+        end
+      else
+        
+      end
     end
 
     @content.add_element(box)
   end
 
-  def enter(env, db)
+  def post(env, db)
     case @url
     when "upload"
       # We must store a file

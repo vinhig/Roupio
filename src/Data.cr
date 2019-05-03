@@ -23,12 +23,12 @@ class Data
     id
   end
 
-  # Store the path, the author and the id of a new file
+  # Store the path, the author and the id of a new file.
   def store_new_file(original_name : String, author : String, hash : String, category : String)
     @db.exec "insert into files (hash, author, name, category) values (?, ?, ?, ?)", hash, author, original_name, category
   end
 
-  # Get all files owned by the user
+  # Get all files owned by the user.
   def get_all_file(author : String) : Array(Hash(String, String))
     files = [] of Hash(String, String)
     @db.query "select * from files where author = ? order by name asc", author do |rs|
@@ -42,5 +42,16 @@ class Data
       end
     end
     return files
+  end
+
+  # Get and check the file asked by the user.
+  def get_and_chek(author : String, id : String) : String
+    name_file = ""
+    @db.query "select name from files where author = ? and hash = ?", author, id do |rs|
+      rs.each do
+        name_file = rs.read(String)
+      end
+    end
+    return name_file
   end
 end

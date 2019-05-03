@@ -14,14 +14,12 @@ class Page
     @url = env.params.url["url"]
   end
 
-  # Procedurally load the HTML document.
-  # Accessible via GET routes.
-  def load(db)
+  # Load page accessible via GET routes.
+  def get(env, db)
   end
 
-  # Before load the HTML document, work on backend.
-  # Accessible via POST routes.
-  def enter(env, db)
+  # Load page accessible via POST routes.
+  def post(env, db)
   end
 
 

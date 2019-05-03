@@ -59,7 +59,7 @@ pages.each do |page|
       user = UserInfo.new(env.session.string("id"), "admin")
       mod = page[1].new user, template, env
       # A get route means load and render the DOM
-      mod.load(db)
+      mod.get env, db
       mod.render
     end
   end
@@ -71,7 +71,8 @@ pages.each do |page|
     user = UserInfo.new(env.session.string("id"), "admin")
     mod = page[1].new user, template, env
     # A post route means just enter the page
-    mod.enter env, db
+    # A redirect must be operate afterward
+    mod.post env, db
   end
 end
 
