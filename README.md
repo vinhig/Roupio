@@ -4,28 +4,31 @@ Roupio is a open source nonprofit organization oriented ERP. It aims to be easil
 
 ## Installation
 
-To install and run Roupio :
-1. Clone this repo
-2. Dive into the directory
-3. `crystal run src/Roupio.cr`
-4. `firefox http://localhost:3000`
-5. Enjoy !
+Roupio comes with a management script. From it, you can easily build and run your Roupio instance.
+
+To build and run it as a production instance :
+
+`./manager.sh prod` or `./manager.sh build` if you just want to build the server.
+
+To build it as a development instance :
+
+`./manager.sh dvpt`
+
+To generate the documentation :
+
+`./manager.sh docs`
+
+Make sure to install all needed dependencies for the crystal langage. Before any compilation, run
+
+`./manager.sh deps`
+
+to find any incomplete dependencies. The tool won't install it. Check https://crystal-lang.org/reference/installation/ to find any help.
 
 *Don't forget that's Roupio is in his early state of dvpt.*
 
-## Documentation
-
-Roupio is as documented as we can. To generate the documentation :
-
-1. Clone this repo
-2. Dive into the directory
-3. `crystal docs src/Roupio.cr`
-4. `firefox docs/index.html`
-5. Enjoy !
-
 ## Contributing
 
-1. Fork it (<https://github.com/your-github-user/Roupio/fork>)
+1. Fork it (<https://github.com/vinhig/Roupio/fork>)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
