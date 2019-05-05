@@ -21,7 +21,7 @@ post "/connect" do |env|
   pseudo = env.params.body["pseudo"].as(String)
   mdp = env.params.body["mdp"].as(String)
   can_connect = db.connect?(pseudo, mdp)
-  if can_connect != ""
+  if can_connect != ["", ""]
     env.session.string("id", can_connect[0])
     env.session.string("level", can_connect[1])
     env.redirect "/cloud/main"
