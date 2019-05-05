@@ -3,7 +3,8 @@ window.onload = function () {
     // If there is a msg parameter, show it
     msgs = [
         "Un fichier identique dont vous êtes l'auteur existe déjà.",
-        "Ce fichier est inaccessible."
+        "Ce fichier est inaccessible.",
+        "Une ressource identique a déjà été partagée."
     ]
     var urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('msg')) {

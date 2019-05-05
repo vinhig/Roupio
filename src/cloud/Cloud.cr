@@ -14,10 +14,10 @@ class Cloud < Page
     side = HTML::SidePanel.new("cloud-id", "Cloud", links)
     @content.add_element(side)
     box = HTML::ScrollBox.new("ScrollBox")
+    card = HTML::Card.new("Card")
     case @url
     when "my"
       # List of files card
-      card = HTML::Card.new("Card")
       # Adding little caption to explain the page
       caption = HTML::Paragraph.new("caption-help", "Liste des fichiers dont vous êtes l'auteur.")
       # Adding the Box and the Card
@@ -52,7 +52,6 @@ class Cloud < Page
       root.add_element([projet, administration, communication, formations, events, autres])
       card.add_element(caption)
       card.add_element(root)
-      box.add_element(card)
       # Upload a file card
       upload = HTML::Card.new("card-upload")
       form = HTML::Form.new("form-new-file", "post", "cloud/upload")
@@ -73,7 +72,6 @@ class Cloud < Page
       upload.add_element(form)
       box.add_element(upload)
     when "shared"
-      card = HTML::Card.new("Card")
       card.add_element(HTML::Header2.new("test", "Fichiers partagés"))
       caption = HTML::Paragraph.new("caption-help", "Liste des fichiers auquels vous avez accès en étant #{@user.level}")
       # Build the file tree
@@ -105,17 +103,37 @@ class Cloud < Page
       root.add_element([projet, administration, communication, formations, events, autres])
       card.add_element(caption)
       card.add_element(root)
-      box.add_element(card)
     when "res"
-      card = HTML::Card.new("Card")
       card.add_element(HTML::Header2.new("test", "Ressources partagées"))
-      box.add_element(card)
+      caption = HTML::Paragraph.new("caption-explain", "Diverses ressources partagées par les membres.")
+      card.add_element(caption)
+      db.get_all_res().each do |res|
+        frame = HTML::Frame.new(res["provider"] + res["content"])
+        frame.add_element(HTML::Paragraph.new("#{res["provider"] + res["content"]}-explain", res["caption"]))
+        frame.add_element(HTML::NavLink.new("#{res["provider"] + res["content"]}-content", res["content"], res["content"]))
+        signature = HTML::Paragraph.new("#{res["provider"] + res["content"]}-provider", "Partagé par <b>#{res["provider"]}</b>")
+        signature.attributes["style"] = "font-size : smaller"
+        frame.add_element(signature)
+        card.add_element(frame)
+      end
+      # Add a new ressource card
+      add_new = HTML::Card.new("add-new-res")
+      add_new.add_element(HTML::Header2.new("test", "Partager une ressource"))
+      form = HTML::Form.new("share", "post", "cloud/share")
+      form.add_element(HTML::Header4.new("label-caption", "Description de la ressource"))
+      form.add_element(HTML::Input.new("caption", "text", "Description"))
+      form.add_element(HTML::Header4.new("label-content", "URL de la ressource"))
+      form.add_element(HTML::Input.new("content", "url", "URL"))
+      pa = HTML::Paragraph.new("submit-p", "")
+      pa.add_element(HTML::Input.new("submit", "submit", "Partager"))
+      pa.attributes["style"] = "text-align: center"
+      form.add_element(pa)
+      add_new.add_element(form)
+      box.add_element(add_new)
     when "main"
-      card = HTML::Card.new("Card")
       card.add_element(HTML::Header2.new("test", "Le cloud!"))
       caption = HTML::Paragraph.new("caption-explain", "Le cloud vous permet de partager des fichiers avec les différents membres de l'association, d'archiver des documents importants ainsi que de partager des ressources et des liens que vous jugez utiles.")
       card.add_element(caption)
-      box.add_element(card)
     when "get_file"
       # An user asks to access a certain file.
       # Check if the file exists and if the user can take it.
@@ -130,6 +148,7 @@ class Cloud < Page
       else
       end
     end
+    box.add_element(card, as_first: true)
     @content.add_element(box)
   end
 
@@ -166,6 +185,17 @@ class Cloud < Page
         File.write(path, content)
         db.store_new_file(file_name, @user.pseudo, md5.to_s, category, visibility)
         env.redirect("my")
+      end
+    when "share"
+      # Store a new ressource
+      content = env.params.body["content"]
+      caption = env.params.body["caption"]
+      if !db.store_new_res(content, caption, @user.pseudo)
+        # Error...
+        # Same ressource found
+        env.redirect("res?msg=2")
+      else
+        env.redirect("res")
       end
     end
   end

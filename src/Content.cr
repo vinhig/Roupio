@@ -69,9 +69,13 @@ module HTML
     end
 
     # Add an HTML element to the list of children.
-    def add_element(element : HTMLElement)
+    def add_element(element : HTMLElement, as_first : Bool = false)
       # Add a new element to the list of children
-      @children.push(element)
+      if as_first
+        @children.insert(0, element)
+      else
+        @children.push(element)
+      end
     end
 
     # Add an list of HTML element to the list of children.
@@ -261,6 +265,16 @@ module HTML
         @innerText = "<li class='folder-label'>#{label}/</li>"
         add_element(HTML::Span.new("label-span", label))
       end
+    end
+  end
+
+  # Custom HTML element representing a bordered tree.
+  class Frame < HTMLElement
+    # Init a stylized 'div' from given characteristics
+    def initialize(@id)
+      super(@id)
+      @tag = "div"
+      @attributes["class"] = "frame"
     end
   end
 end

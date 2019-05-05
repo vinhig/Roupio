@@ -45,6 +45,8 @@ section {
     padding: 10px;
     width: 50%;
     border: 1px solid lightgray;
+    max-height: 90vh;
+    overflow: scroll;
 }
 
 /* Input */
@@ -88,4 +90,12 @@ input[type="submit"] {
     padding: 5px;
     padding-left: -15px;
     list-style-image: url(icons/folder.png);
+}
+
+/* Frame stylized div */
+
+div.frame {
+    border: lightgray 1px solid;
+    margin: 5px;
+    padding: 5px;
 }

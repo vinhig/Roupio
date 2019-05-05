@@ -32,7 +32,7 @@ end
 
 # Define pages and their corresponding Page classes
 pages = {
-  ["/member", "Membre"] => Member,
+  ["/member", "Membres"] => Member,
   ["/cloud", "Cloud"]   => Cloud,
 }
 

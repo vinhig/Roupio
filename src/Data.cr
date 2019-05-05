@@ -75,4 +75,41 @@ class Data
     end
     return name_file
   end
+
+  # Get all shared ressources.
+  def get_all_res() : Array(Hash(String, String))
+    res = [] of Hash(String, String)
+    @db.query "select content, caption, provider from res order by date desc" do |rs|
+      rs.each do
+        res.push({
+          rs.column_name(0) => rs.read(String),
+          rs.column_name(1) => rs.read(String),
+          rs.column_name(2) => rs.read(String),
+        })
+      end
+    end
+    return res
+  end
+
+  # Store a new ressource.
+  #
+  # Return false if a same ressource is in the database.
+  def store_new_res(content : String, caption : String, provider : String) : Bool
+    md5 = OpenSSL::Digest.new("md5")
+    md5.update(content)
+    index = 0
+    @db.query "select hash from res where hash = ?", md5.to_s do |rs|
+      rs.each do
+        index += 1
+      end
+    end
+
+    if index > 0
+      false
+    else
+      # We can safely store the ressource
+      @db.exec "insert into res (content, caption, provider, hash) values (?, ?, ?, ?)", content, caption, provider, md5.to_s
+      true
+    end
+  end
 end
